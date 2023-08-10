@@ -7,11 +7,9 @@ export async function sendAnnualMessage() {
     const lastYearToday = new Date(today);
 
     lastYearToday.setFullYear(today.getFullYear() - 1);
-    console.log(lastYearToday);
 
     const startOfLastYear = new Date(lastYearToday);
     startOfLastYear.setHours(0, 0, 0, 0);
-    console.log(startOfLastYear);
 
     const message = await Message.findAll({
         where: {
@@ -34,8 +32,24 @@ export async function sendAnnualMessage() {
     }
 }
 
+export async function getUserMessages(req, res) {
+    const message = await Message.findAll({
+        where: {
+            owner_id: req.session.auth,
+        },
+    })
+        .then((message) => {
+            return res.status(200).json({ message });
+        })
+        .catch((err) => {
+            return res
+                .status(500)
+                .json({ message: "An error had occured", err });
+        });
+}
+
 const sendAnnualMessageJob = new CronJob(
-    "*/3 * * * * *",
+    "*/30 * * * * *",
     () => {
         try {
             sendAnnualMessage();

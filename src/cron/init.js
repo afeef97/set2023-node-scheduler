@@ -1,4 +1,4 @@
-import sendAnnualMessageJob from "../controllers/scheduler/message";
+import sendAnnualMessageJob from "../controllers/scheduler/messageControllers";
 
 function cronInit() {
     sendAnnualMessageJob.start();

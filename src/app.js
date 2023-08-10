@@ -8,6 +8,8 @@ import fourOhFour from "./middleware/fourOhFour";
 import root from "./routes/root";
 import dbInit from "./database/init";
 import cronInit from "./cron/init";
+import apiRoutes from "./routes/api";
+import session from "express-session";
 
 const app = express();
 
@@ -28,8 +30,20 @@ dbInit();
 // Initialize cron job
 cronInit();
 
+// Apply session
+const oneDay = 1000 * 60 * 60 * 24;
+app.use(
+    session({
+        secret: config.sessionSecretToken,
+        resave: false,
+        saveUninitialized: true,
+        cookie: { maxAge: oneDay },
+    })
+);
+
 // Apply routes before error handling
 app.use("/", root);
+app.use("/api", apiRoutes);
 
 // Apply error handling last
 app.use(fourOhFour);
